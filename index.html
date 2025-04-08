@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EC Helper</title>
+    <link href="style.css" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="bg-gray-200 py-4 text-center">
+      <nav class="container mx-auto flex justify-between items-center">
+        <img src="logo.png" alt="EC Helper Logo" class="w-12 h-12 mr-4" />
+        <ul class="flex items-center">
+          <li class="mr-4">
+            <a href="#" class="text-gray-600 hover:text-red-500">Interaction</a>
+          </li>
+          <li><a href="#" class="text-gray-600 hover:text-red-500">SR</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main class="container mx-auto p-4 pt-6 md:p-6 lg:p-12 xl:p-24">
+      <section
+        id="interaction-page"
+        class="bg-gray-200 p-4 rounded shadow-md w-80vh mx-auto"
+      >
+        <h1 class="text-3xl font-bold mb-4">Interaction</h1>
+        <form id="interaction-form" class="w-80vh mx-auto">
+          <div class="flex items-center mb-4">
+            <label for="calling-number" class="w-1/4 text-gray-600"
+              >Calling Number:</label
+            >
+            <input
+              type="text"
+              id="calling-number"
+              name="calling-number"
+              class="w-3/4 p-2 border border-gray-400 rounded"
+            />
+          </div>
+          <div class="flex items-center mb-4">
+            <label for="incident-number" class="w-1/4 text-gray-600"
+              >Incident Number:</label
+            >
+            <input
+              type="text"
+              id="incident-number"
+              name="incident-number"
+              class="w-3/4 p-2 border border-gray-400 rounded"
+            />
+          </div>
+          <div class="flex items-center mb-4">
+            <label for="name" class="w-1/4 text-gray-600">Name:</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              class="w-3/4 p-2 border border-gray-400 rounded"
+            />
+          </div>
+          <div class="flex items-center mb-4">
+            <label for="reason-for-calling" class="w-1/4 text-gray-600"
+              >Reason for Calling:</label
+            >
+            <input
+              type="text"
+              id="reason-for-calling"
+              name="reason-for-calling"
+              class="w-3/4 p-2 border border-gray-400 rounded"
+            />
+          </div>
+          <div class="flex items-center mb-4">
+            <label for="findings" class="w-1/4 text-gray-600">Findings:</label>
+            <input
+              type="text"
+              id="findings"
+              name="findings"
+              class="w-3/4 p-2 border border-gray-400 rounded"
+            />
+          </div>
+          <div class="flex items-center mb-4">
+            <label for="resolution" class="w-1/4 text-gray-600"
+              >Resolution:</label
+            >
+            <input
+              type="text"
+              id="resolution"
+              name="resolution"
+              class="w-3/4 p-2 border border-gray-400 rounded"
+            />
+          </div>
+          <div class="flex justify-center mb-4">
+            <button
+              id="generate-button"
+              class="bg-red-500 hover:bg-red-700 text-white font-bold py-4 px-8 rounded text-2xl"
+            >
+              Generate
+            </button>
+          </div>
+        </form>
+        <div id="card-list" class="mt-4"></div>
+      </section>
+    </main>
+    <footer class="bg-gray-200 py-4 text-center mt-4">
+      <p class="text-gray-600">&copy; 2023 EC Helper. All rights reserved.</p>
+    </footer>
+    <script src="script.js"></script>
+  </body>
+</html>

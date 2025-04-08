@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EC Helper</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <img src="logo.png" alt="EC Helper Logo">
+            <ul>
+                <li><a href="#">Interaction</a></li>
+                <li><a href="#">SR</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section id="interaction-page">
+            <h1>Interaction</h1>
+            <form id="interaction-form">
+                <div class="form-group">
+                    <label for="calling-number">Calling Number:</label>
+                    <input type="text" id="calling-number" name="calling-number">
+                </div>
+                <div class="form-group">
+                    <label for="incident-number">Incident Number:</label>
+                    <input type="text" id="incident-number" name="incident-number">
+                </div>
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name">
+                </div>
+                <div class="form-group">
+                    <label for="reason-for-calling">Reason for Calling:</label>
+                    <input type="text" id="reason-for-calling" name="reason-for-calling">
+                </div>
+                <div class="form-group">
+                    <label for="findings">Findings:</label>
+                    <input type="text" id="findings" name="findings">
+                </div>
+                <div class="form-group">
+                    <label for="resolution">Resolution:</label>
+                    <input type="text" id="resolution" name="resolution">
+                </div>
+                <button id="generate-button">Generate</button>
+            </form>
+            <div id="card-list"></div>
+        </section>
+    </
