@@ -4,108 +4,231 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>EC Helper</title>
-    <link href="style.css" rel="stylesheet" />
     <link
       href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
       rel="stylesheet"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link href="style.css" rel="stylesheet" />
   </head>
-  <body>
-    <header class="bg-gray-200 py-4 text-center">
-      <nav class="container mx-auto flex justify-between items-center">
-        <img src="logo.png" alt="EC Helper Logo" class="w-12 h-12 mr-4" />
-        <ul class="flex items-center">
-          <li class="mr-4">
-            <a href="#" class="text-gray-600 hover:text-red-500">Interaction</a>
-          </li>
-          <li><a href="#" class="text-gray-600 hover:text-red-500">SR</a></li>
-        </ul>
-      </nav>
-    </header>
-    <main class="container mx-auto p-4 pt-6 md:p-6 lg:p-12 xl:p-24">
-      <section
-        id="interaction-page"
-        class="bg-gray-200 p-4 rounded shadow-md w-80vh mx-auto"
+  <body class="bg-gray-100 h-screen flex">
+    <!-- Collapsible Sidebar -->
+    <aside class="sidebar bg-gray-200 text-gray-700 shadow-md" id="sidebar">
+      <div
+        class="sidebar-toggle absolute top-4 left-4 bg-gray-600 text-white p-2 rounded cursor-pointer"
+        onclick="toggleSidebar()"
+        id="sidebar-toggle"
       >
-        <h1 class="text-3xl font-bold mb-4">Interaction</h1>
-        <form id="interaction-form" class="w-80vh mx-auto">
-          <div class="flex items-center mb-4">
-            <label for="calling-number" class="w-1/4 text-gray-600"
-              >Calling Number:</label
-            >
-            <input
-              type="text"
-              id="calling-number"
-              name="calling-number"
-              class="w-3/4 p-2 border border-gray-400 rounded"
-            />
-          </div>
-          <div class="flex items-center mb-4">
-            <label for="incident-number" class="w-1/4 text-gray-600"
-              >Incident Number:</label
-            >
-            <input
-              type="text"
-              id="incident-number"
-              name="incident-number"
-              class="w-3/4 p-2 border border-gray-400 rounded"
-            />
-          </div>
-          <div class="flex items-center mb-4">
-            <label for="name" class="w-1/4 text-gray-600">Name:</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              class="w-3/4 p-2 border border-gray-400 rounded"
-            />
-          </div>
-          <div class="flex items-center mb-4">
-            <label for="reason-for-calling" class="w-1/4 text-gray-600"
-              >Reason for Calling:</label
-            >
-            <input
-              type="text"
-              id="reason-for-calling"
-              name="reason-for-calling"
-              class="w-3/4 p-2 border border-gray-400 rounded"
-            />
-          </div>
-          <div class="flex items-center mb-4">
-            <label for="findings" class="w-1/4 text-gray-600">Findings:</label>
-            <input
-              type="text"
-              id="findings"
-              name="findings"
-              class="w-3/4 p-2 border border-gray-400 rounded"
-            />
-          </div>
-          <div class="flex items-center mb-4">
-            <label for="resolution" class="w-1/4 text-gray-600"
-              >Resolution:</label
-            >
-            <input
-              type="text"
-              id="resolution"
-              name="resolution"
-              class="w-3/4 p-2 border border-gray-400 rounded"
-            />
-          </div>
-          <div class="flex justify-center mb-4">
-            <button
-              id="generate-button"
-              class="bg-red-500 hover:bg-red-700 text-white font-bold py-4 px-8 rounded text-2xl"
-            >
-              Generate
-            </button>
-          </div>
-        </form>
-        <div id="card-list" class="mt-4"></div>
-      </section>
-    </main>
-    <footer class="bg-gray-200 py-4 text-center mt-4">
-      <p class="text-gray-600">&copy; 2023 EC Helper. All rights reserved.</p>
-    </footer>
+        &#9776;
+      </div>
+      <h2 class="text-lg font-semibold mb-4 pl-8 pt-4">History</h2>
+      <!-- Added pl-8 and pt-4 -->
+      <div id="sidebar-content" class="overflow-y-auto h-full px-4 pb-4">
+        <!-- Added px-4 and pb-4 -->
+        <!-- Content will be dynamically added here -->
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content flex-1 p-4" id="main-content">
+      <header class="bg-white py-4 shadow-md flex items-center">
+        <!-- Use flex to align items -->
+        <div
+          class="top-nav-toggle mr-4"
+          onclick="toggleSidebar()"
+          id="top-nav-toggle"
+        >
+          <!-- Hamburger icon in the top nav -->
+          &#9776;
+        </div>
+
+        <nav class="container mx-auto flex justify-between items-center">
+          <img src="logo.png" alt="EC Helper Logo" class="w-12 h-12 mr-4" />
+          <ul class="flex items-center">
+            <li class="mr-4">
+              <a href="#" class="text-gray-600 hover:text-red-500"
+                >Interaction</a
+              >
+            </li>
+            <li>
+              <a href="#" class="text-gray-600 hover:text-red-500">SR</a>
+            </li>
+          </ul>
+        </nav>
+      </header>
+      <main class="container mx-auto p-4 pt-6 md:p-6 lg:p-12 xl:p-24">
+        <section
+          id="interaction-page"
+          class="bg-white p-4 rounded shadow-md mx-auto"
+        >
+          <h1 class="text-3xl font-bold mb-4">Interaction</h1>
+          <form id="interaction-form" class="mx-auto">
+            <div class="flex items-center mb-4">
+              <label
+                for="calling-number"
+                class="w-1/4 text-gray-600 block text-right mr-2"
+                >Calling Number:</label
+              >
+              <input
+                type="text"
+                id="calling-number"
+                name="calling-number"
+                class="w-3/4 p-2 border border-gray-400 rounded"
+              />
+            </div>
+            <div class="flex items-center mb-4">
+              <label
+                for="incident-number"
+                class="w-1/4 text-gray-600 block text-right mr-2"
+                >Incident Number:</label
+              >
+              <input
+                type="text"
+                id="incident-number"
+                name="incident-number"
+                class="w-3/4 p-2 border border-gray-400 rounded"
+              />
+            </div>
+            <div class="flex items-center mb-4">
+              <label
+                for="name"
+                class="w-1/4 text-gray-600 block text-right mr-2"
+                >Name:</label
+              >
+              <input
+                type="text"
+                id="name"
+                name="name"
+                class="w-3/4 p-2 border border-gray-400 rounded"
+              />
+            </div>
+            <div class="flex items-center mb-4">
+              <label
+                for="reason-for-calling"
+                class="w-1/4 text-gray-600 block text-right mr-2"
+                >Reason for Calling:</label
+              >
+              <input
+                type="text"
+                id="reason-for-calling"
+                name="reason-for-calling"
+                class="w-3/4 p-2 border border-gray-400 rounded"
+              />
+            </div>
+            <div class="flex items-center mb-4">
+              <label
+                for="findings"
+                class="w-1/4 text-gray-600 block text-right mr-2"
+                >Findings:</label
+              >
+              <input
+                type="text"
+                id="findings"
+                name="findings"
+                class="w-3/4 p-2 border border-gray-400 rounded"
+              />
+            </div>
+            <div class="flex items-center mb-4">
+              <label
+                for="resolution"
+                class="w-1/4 text-gray-600 block text-right mr-2"
+                >Resolution:</label
+              >
+              <input
+                type="text"
+                id="resolution"
+                name="resolution"
+                class="w-3/4 p-2 border border-gray-400 rounded"
+              />
+            </div>
+            <div class="flex justify-center mb-4">
+              <button
+                id="generate-button"
+                class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded text-xl"
+              >
+                Generate
+              </button>
+            </div>
+          </form>
+          <div id="card-list" class="mt-4"></div>
+        </section>
+      </main>
+      <footer class="bg-white py-4 text-center mt-4 shadow-md">
+        <p class="text-gray-600">&copy; 2023 EC Helper. All rights reserved.</p>
+      </footer>
+    </div>
+
+    <script>
+      const sidebar = document.getElementById("sidebar");
+      const mainContent = document.getElementById("main-content");
+      const sidebarToggle = document.getElementById("sidebar-toggle");
+      const topNavToggle = document.getElementById("top-nav-toggle"); // Get the top nav toggle
+
+      function toggleSidebar() {
+        sidebar.classList.toggle("collapsed");
+        mainContent.classList.toggle("sidebar-collapsed");
+      }
+
+      function populateSidebar(data) {
+        const sidebarContent = document.getElementById("sidebar-content");
+        sidebarContent.innerHTML = ""; // Clear existing content
+
+        data.forEach((item) => {
+          const button = document.createElement("button");
+          button.classList.add("collapsible");
+          button.textContent = item.date;
+
+          const content = document.createElement("div");
+          content.classList.add("collapsible-content");
+
+          item.interactions.forEach((interaction) => {
+            const interactionDiv = document.createElement("div");
+            interactionDiv.innerHTML = `<p>Name: ${interaction.name}</p><p>Reason: ${interaction.reason}</p>`; // Customize as needed
+            content.appendChild(interactionDiv);
+          });
+
+          sidebarContent.appendChild(button);
+          sidebarContent.appendChild(content);
+
+          button.addEventListener("click", function () {
+            this.classList.toggle("active");
+            const content = this.nextElementSibling;
+            if (content.style.display === "block") {
+              content.style.display = "none";
+            } else {
+              content.style.display = "block";
+            }
+          });
+        });
+      }
+
+      // Close sidebar on load if screen is too small
+      function checkScreenWidth() {
+        if (window.innerWidth < 400) {
+          sidebar.classList.add("collapsed");
+          mainContent.classList.add("sidebar-collapsed");
+        } else {
+          sidebar.classList.remove("collapsed");
+          mainContent.classList.remove("sidebar-collapsed");
+        }
+      }
+
+      // Call on load and resize
+      checkScreenWidth();
+      window.addEventListener("resize", checkScreenWidth);
+    </script>
     <script src="script.js"></script>
+  </body>
+</html>
+nymous"
+      referrerpolicy="no-referrer"
+    />
+  ipt src="script.js"></script>
   </body>
 </html>
