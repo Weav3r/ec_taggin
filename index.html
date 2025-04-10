@@ -16,59 +16,112 @@
       referrerpolicy="no-referrer"
     />
     <link href="style.css" rel="stylesheet" />
+    <style>
+      @media (max-width: 800px) {
+        #sidebar {
+          display: none;
+        }
+      }
+    </style>
   </head>
-  <body class="bg-gray-100 h-screen flex">
-    <!-- Collapsible Sidebar -->
-    <aside class="sidebar bg-gray-200 text-gray-700 shadow-md" id="sidebar">
-      <div
-        class="sidebar-toggle absolute top-4 left-4 bg-gray-600 text-white p-2 rounded cursor-pointer"
-        onclick="toggleSidebar()"
-        id="sidebar-toggle"
-      >
-        &#9776;
+  <body class="h-screen flex text-gray-700 relative">
+    <!-- Sidebar -->
+    <aside
+      id="sidebar"
+      class="w-64 min-w-64 transition-all duration-300 bg-gray-200 shadow-md overflow-y-auto flex flex-col justify-between"
+    >
+      <div>
+        <div class="flex items-center px-4 py-4 border-b border-gray-300">
+          <h2 class="text-lg font-semibold">History</h2>
+        </div>
+        <div id="sidebar-content" class="flex-1 px-4 py-4">
+          <!-- Content will be dynamically added here -->
+        </div>
       </div>
-      <h2 class="text-lg font-semibold mb-4 pl-8 pt-4">History</h2>
-      <!-- Added pl-8 and pt-4 -->
-      <div id="sidebar-content" class="overflow-y-auto h-full px-4 pb-4">
-        <!-- Added px-4 and pb-4 -->
-        <!-- Content will be dynamically added here -->
+
+      <!-- Bottom buttons -->
+      <div
+        class="flex items-center justify-between p-4 border-t border-gray-300 relative"
+      >
+        <div class="relative">
+          <button
+            id="export-all"
+            class="bg-gray-600 hover:bg-gray-700 text-white text-sm px-4 py-2 rounded relative"
+          >
+            Export
+          </button>
+          <div
+            id="export-popup"
+            class="hidden absolute left-0 mt-2 bg-white shadow-lg rounded text-sm py-2 z-50 w-48"
+          >
+            <button
+              class="block w-full text-left px-4 py-2 hover:bg-gray-100"
+              onclick="exportAllCurrentDate()"
+            >
+              Today (Text)
+            </button>
+            <button
+              class="block w-full text-left px-4 py-2 hover:bg-gray-100"
+              onclick="exportAllText()"
+            >
+              All (Text)
+            </button>
+            <button
+              class="block w-full text-left px-4 py-2 hover:bg-gray-100"
+              onclick="exportAllJSON()"
+            >
+              All Data (JSON)
+            </button>
+          </div>
+        </div>
+        <button class="text-gray-600 hover:text-gray-800 text-lg">
+          <i class="fas fa-sliders-h"></i>
+        </button>
+        <button class="text-red-500 hover:text-red-700 text-lg">
+          <i class="fas fa-trash"></i>
+        </button>
       </div>
     </aside>
 
-    <!-- Main Content -->
-    <div class="main-content flex-1 p-4" id="main-content">
-      <header class="bg-white py-4 shadow-md flex items-center">
-        <!-- Use flex to align items -->
-        <div
-          class="top-nav-toggle mr-4"
-          onclick="toggleSidebar()"
-          id="top-nav-toggle"
-        >
-          <!-- Hamburger icon in the top nav -->
-          &#9776;
-        </div>
-
-        <nav class="container mx-auto flex justify-between items-center">
+    <!-- Main Content Column -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <!-- Top Navigation -->
+      <header
+        class="bg-white py-4 px-6 shadow-md flex items-center justify-between"
+      >
+        <div class="flex items-center">
+          <button
+            class="bg-gray-600 text-white p-2 rounded cursor-pointer mr-4"
+            onclick="toggleSidebar()"
+          >
+            &#9776;
+          </button>
           <img src="logo.png" alt="EC Helper Logo" class="w-12 h-12 mr-4" />
-          <ul class="flex items-center">
-            <li class="mr-4">
-              <a href="#" class="text-gray-600 hover:text-red-500"
-                >Interaction</a
-              >
-            </li>
-            <li>
-              <a href="#" class="text-gray-600 hover:text-red-500">SR</a>
-            </li>
-          </ul>
-        </nav>
+          <h1 class="text-xl font-bold">EC Helper</h1>
+        </div>
+        <ul class="flex space-x-6">
+          <li>
+            <a href="#" class="text-gray-600 hover:text-red-500">Interaction</a>
+          </li>
+          <li><a href="#" class="text-gray-600 hover:text-red-500">SR</a></li>
+        </ul>
       </header>
-      <main class="container mx-auto p-4 pt-6 md:p-6 lg:p-12 xl:p-24">
+
+      <!-- Main Content Area -->
+      <main
+        id="main-content"
+        class="flex-1 overflow-y-auto p-6 transition-all duration-300 bg-gray-50"
+      >
         <section
           id="interaction-page"
-          class="bg-white p-4 rounded shadow-md mx-auto"
+          class="bg-white p-4 rounded shadow-md mx-auto max-w-3xl"
         >
           <h1 class="text-3xl font-bold mb-4">Interaction</h1>
-          <form id="interaction-form" class="mx-auto">
+          <form
+            id="interaction-form"
+            class="mx-auto"
+            onsubmit="handleFormSubmit(event)"
+          >
             <div class="flex items-center mb-4">
               <label
                 for="calling-number"
@@ -149,6 +202,7 @@
             </div>
             <div class="flex justify-center mb-4">
               <button
+                type="submit"
                 id="generate-button"
                 class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded text-xl"
               >
@@ -159,11 +213,14 @@
           <div id="card-list" class="mt-4"></div>
         </section>
       </main>
-      <footer class="bg-white py-4 text-center mt-4 shadow-md">
+
+      <!-- Footer -->
+      <footer class="bg-white py-4 text-center shadow-md">
         <p class="text-gray-600">&copy; 2023 EC Helper. All rights reserved.</p>
       </footer>
     </div>
 
     <script src="script.js"></script>
+    <!-- <script type="module" src="main.js"></script> -->
   </body>
 </html>

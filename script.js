@@ -1,395 +1,309 @@
-// Get the generate button and card list elements
-const generateButton = document.getElementById('generate-button');
+const form = document.getElementById('interaction-form');
 const cardList = document.getElementById('card-list');
-
-// Add an event listener to the generate button
-generateButton.addEventListener('click', generateCard);
-
-// Function to generate a card
-function generateCard() {
-    // Get the input values
-    const callingNumber = document.getElementById('calling-number').value;
-    const incidentNumber = document.getElementById('incident-number').value;
-    const name = document.getElementById('name').value;
-    const reasonForCalling = document.getElementById('reason-for-calling').value;
-    const findings = document.getElementById('findings').value;
-    const resolution = document.getElementById('resolution').value;
-
-    // Create a JSON object with the input values
-    const interaction = {
-        id: Date.now(),
-        datetime: new Date().toISOString(),
-        cn: callingNumber,
-        in: incidentNumber,
-        name: name,
-        reason: reasonForCalling,
-        findings: findings,
-        resolution: resolution
-    };
-
-    // Get the current date
-    const date = new Date();
-    const currentDate = `${String(date.getMonth() + 1).padStart(2, '0')}_${String(date.getDate()).padStart(2, '0')}_${date.getFullYear()}`;
-
-    // Check if the date already exists in local storage
-    let storedData = localStorage.getItem('interactions');
-    if (storedData) {
-        storedData = JSON.parse(storedData);
-        const existingDate = storedData.find((item) => item.date === currentDate);
-        if (existingDate) {
-            existingDate.interactions.push(interaction);
-            localStorage.setItem('interactions', JSON.stringify(storedData));
-        } else {
-            storedData.push({ date: currentDate, interactions: [interaction] });
-            localStorage.setItem('interactions', JSON.stringify(storedData));
-        }
-    } else {
-        localStorage.setItem('interactions', JSON.stringify([{ date: currentDate, interactions: [interaction] }]));
-    }
-
-    // Display the interactions
-    displayInteractions();
-}
-
-
-
-// Function to display the interactions
-function displayInteractions() {
-    // Get the stored data
-    const storedData = localStorage.getItem('interactions');
-    if (storedData) {
-        const data = JSON.parse(storedData);
-        //  Call the populateSidebar function here
-        populateSidebar(data);
-
-        const currentDate = `${String(new Date().getMonth() + 1).padStart(
-            2,
-            '0'
-        )}_${String(new Date().getDate()).padStart(2, '0')}_${new Date().getFullYear()}`;
-        const currentInteractions = data.find((item) => item.date === currentDate);
-
-        if (currentInteractions) {
-            const interactions = currentInteractions.interactions.sort(
-                (a, b) => new Date(b.datetime) - new Date(a.datetime)
-            );
-            const interactionList = interactions
-                .map((interaction) => {
-                    let cardContent = '';
-                    if (interaction.reason)
-                        cardContent += `<h2 class="text-2xl font-bold mb-2">${interaction.reason}</h2>`;
-                    if (interaction.datetime)
-                        cardContent += `<p class="text-gray-600">Date: ${new Date(
-                            interaction.datetime
-                        ).toLocaleString()}</p>`;
-                    if (interaction.cn)
-                        cardContent += `<p class="text-gray-600">Calling Number: ${interaction.cn}</p>`;
-                    if (interaction.in)
-                        cardContent += `<p class="text-gray-600">Incident Number: ${interaction.in}</p>`;
-                    if (interaction.name)
-                        cardContent += `<p class="text-gray-600">Name: ${interaction.name}</p>`;
-                    if (interaction.findings)
-                        cardContent += `<p class="text-gray-600">Findings: ${interaction.findings}</p>`;
-                    if (interaction.resolution)
-                        cardContent += `<p class="text-gray-600">Resolution: ${interaction.resolution}</p>`;
-
-                    //add done button
-                    return `
-            <div class="card ${interaction.completed ? 'completed-card' : ''
-                        }">
-              <button class="done-button" onclick="toggleComplete(${interaction.id
-                        })"><i class="fas fa-check-circle"></i></button>
-                ${cardContent}
-                <div class="flex justify-end mt-4">
-                    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-2" onclick="copyInteraction(${interaction.id
-                        })">Copy</button>
-                    <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mx-2" onclick="updateInteraction(${interaction.id
-                        })">Update</button>
-                    <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mx-2" onclick="deleteInteraction(${interaction.id
-                        })">Delete</button>
-                </div>
-            </div>
-        `;
-                })
-                .join('');
-            cardList.innerHTML = interactionList;
-        } else {
-            cardList.innerHTML = '';
-        }
-    } else {
-        cardList.innerHTML = '';
-    }
-}
-
-//Add toggleComplete function
-function toggleComplete(interactionId) {
-    const storedData = localStorage.getItem('interactions');
-    if (storedData) {
-        const data = JSON.parse(storedData);
-        const currentDate = `${String(new Date().getMonth() + 1).padStart(
-            2,
-            '0'
-        )}_${String(new Date().getDate()).padStart(2, '0')}_${new Date().getFullYear()}`;
-        const currentInteractions = data.find((item) => item.date === currentDate);
-        if (currentInteractions) {
-            const interaction = currentInteractions.interactions.find(
-                (interaction) => interaction.id === interactionId
-            );
-            if (interaction) {
-                interaction.completed = !interaction.completed; // Toggle the completed status
-                localStorage.setItem('interactions', JSON.stringify(data)); // Save the updated data
-                displayInteractions(); // Refresh the display
-            }
-        }
-    }
-}
-//Update generateCard to set completed
-function generateCard() {
-    // Get the input values
-    const callingNumber = document.getElementById('calling-number').value;
-    const incidentNumber = document.getElementById('incident-number').value;
-    const name = document.getElementById('name').value;
-    const reasonForCalling = document.getElementById('reason-for-calling').value;
-    const findings = document.getElementById('findings').value;
-    const resolution = document.getElementById('resolution').value;
-
-    // Create a JSON object with the input values
-    const interaction = {
-        id: Date.now(),
-        datetime: new Date().toISOString(),
-        cn: callingNumber,
-        in: incidentNumber,
-        name: name,
-        reason: reasonForCalling,
-        findings: findings,
-        resolution: resolution,
-        completed: false, //Initialize completed to false
-    };
-
-    // Get the current date
-    const date = new Date();
-    const currentDate = `${String(date.getMonth() + 1).padStart(
-        2,
-        '0'
-    )}_${String(date.getDate()).padStart(2, '0')}_${date.getFullYear()}`;
-
-    // Check if the date already exists in local storage
-    let storedData = localStorage.getItem('interactions');
-    if (storedData) {
-        storedData = JSON.parse(storedData);
-        const existingDate = storedData.find((item) => item.date === currentDate);
-        if (existingDate) {
-            existingDate.interactions.push(interaction);
-            localStorage.setItem('interactions', JSON.stringify(storedData));
-        } else {
-            storedData.push({ date: currentDate, interactions: [interaction] });
-            localStorage.setItem('interactions', JSON.stringify(storedData));
-        }
-    } else {
-        localStorage.setItem(
-            'interactions',
-            JSON.stringify([{ date: currentDate, interactions: [interaction] }])
-        );
-    }
-
-    // Display the interactions
-    displayInteractions();
-}
-
-
-// Function to update an interaction
-function updateInteraction(id) {
-    const storedData = localStorage.getItem('interactions');
-    if (storedData) {
-        const data = JSON.parse(storedData);
-        const currentDate = `${String(new Date().getMonth() + 1).padStart(2, '0')}_${String(new Date().getDate()).padStart(2, '0')}_${new Date().getFullYear()}`;
-        const currentInteractions = data.find((item) => item.date === currentDate);
-        if (currentInteractions) {
-            const interactionToUpdate = currentInteractions.interactions.find((interaction) => interaction.id === id);
-            if (interactionToUpdate) {
-                // Update the interaction
-                document.getElementById('calling-number').value = interactionToUpdate.cn;
-                document.getElementById('incident-number').value = interactionToUpdate.in;
-                document.getElementById('name').value = interactionToUpdate.name;
-                document.getElementById('reason-for-calling').value = interactionToUpdate.reason;
-                document.getElementById('findings').value = interactionToUpdate.findings;
-                document.getElementById('resolution').value = interactionToUpdate.resolution;
-
-                // Update the generate button to update the interaction instead of creating a new one
-                document.getElementById('generate-button').onclick = function () {
-                    updateInteractionConfirm(id);
-                };
-
-                // Add a confirm update button
-                const confirmUpdateButton = document.createElement('button');
-                confirmUpdateButton.textContent = 'Confirm Update';
-                confirmUpdateButton.className = 'bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded';
-                confirmUpdateButton.onclick = function () {
-                    updateInteractionConfirm(id);
-                };
-                document.getElementById('interaction-form').appendChild(confirmUpdateButton);
-            }
-        }
-    }
-}
-
-// Function to confirm update an interaction
-function updateInteractionConfirm(id) {
-    const storedData = localStorage.getItem('interactions');
-    if (storedData) {
-        const data = JSON.parse(storedData);
-        const currentDate = `${String(new Date().getMonth() + 1).padStart(2, '0')}_${String(new Date().getDate()).padStart(2, '0')}_${new Date().getFullYear()}`;
-        const currentInteractions = data.find((item) => item.date === currentDate);
-        if (currentInteractions) {
-            const interactionToUpdate = currentInteractions.interactions.find((interaction) => interaction.id === id);
-            if (interactionToUpdate) {
-                // Update the interaction
-                interactionToUpdate.cn = document.getElementById('calling-number').value;
-                interactionToUpdate.in = document.getElementById('incident-number').value;
-                interactionToUpdate.name = document.getElementById('name').value;
-                interactionToUpdate.reason = document.getElementById('reason-for-calling').value;
-                interactionToUpdate.findings = document.getElementById('findings').value;
-                interactionToUpdate.resolution = document.getElementById('resolution').value;
-
-                // Save the updated interaction
-                localStorage.setItem('interactions', JSON.stringify(data));
-
-                // Display the updated interactions
-                displayInteractions();
-
-                // Reset the generate button
-                document.getElementById('generate-button').onclick = generateCard;
-
-                // Remove the confirm update button
-                const confirmUpdateButton = document.getElementById('interaction-form').lastChild;
-                if (confirmUpdateButton.textContent === 'Confirm Update') {
-                    document.getElementById('interaction-form').removeChild(confirmUpdateButton);
-                }
-            }
-        }
-    }
-}
-
-// Function to delete an interaction
-function deleteInteraction(id) {
-    const storedData = localStorage.getItem('interactions');
-    if (storedData) {
-        const data = JSON.parse(storedData);
-        const currentDate = `${String(new Date().getMonth() + 1).padStart(2, '0')}_${String(new Date().getDate()).padStart(2, '0')}_${new Date().getFullYear()}`;
-        const currentInteractions = data.find((item) => item.date === currentDate);
-        if (currentInteractions) {
-            const interactionToDeleteIndex = currentInteractions.interactions.findIndex((interaction) => interaction.id === id);
-            if (interactionToDeleteIndex !== -1) {
-                // Delete the interaction
-                currentInteractions.interactions.splice(interactionToDeleteIndex, 1);
-
-                // Save the updated interactions
-                localStorage.setItem('interactions', JSON.stringify(data));
-
-                // Display the updated interactions
-                displayInteractions();
-            }
-        }
-    }
-}
-
-
-
-// Function to copy an interaction
-
-function copyInteraction(id) {
-    const storedData = localStorage.getItem('interactions');
-    if (storedData) {
-        const data = JSON.parse(storedData);
-        const interactions = data.reduce((acc, curr) => acc.concat(curr.interactions), []);
-        const interactionToCopy = interactions.find((interaction) => interaction.id === id);
-        if (interactionToCopy) {
-            // Create a text string with the interaction details
-            let textToCopy = '';
-            if (interactionToCopy.cn) textToCopy += `Calling Number: ${interactionToCopy.cn}\n`;
-            if (interactionToCopy.in) textToCopy += `Incident Number: ${interactionToCopy.in}\n`;
-            if (interactionToCopy.name) textToCopy += `Name: ${interactionToCopy.name}\n`;
-            if (interactionToCopy.reason) textToCopy += `Reason for Calling: ${interactionToCopy.reason}\n`;
-            if (interactionToCopy.findings) textToCopy += `Findings: ${interactionToCopy.findings}\n`;
-            if (interactionToCopy.resolution) textToCopy += `Resolution: ${interactionToCopy.resolution}\n`;
-
-            // Copy the text to the clipboard
-            if (textToCopy) {
-                navigator.clipboard.writeText(textToCopy).then(() => {
-                    alert('Interaction copied to clipboard');
-                }, () => {
-                    alert('Failed to copy interaction to clipboard');
-                });
-            } else {
-                alert('No interaction details to copy');
-            }
-        } else {
-            alert('Interaction not found');
-        }
-    } else {
-        alert('No interactions found');
-    }
-}
-
-
 const sidebar = document.getElementById("sidebar");
 const mainContent = document.getElementById("main-content");
-const sidebarToggle = document.getElementById("sidebar-toggle");
-const topNavToggle = document.getElementById("top-nav-toggle"); // Get the top nav toggle
 
-function toggleSidebar() {
-    sidebar.classList.toggle("collapsed");
-    mainContent.classList.toggle("sidebar-collapsed");
+let activeSidebarButton = null;
+
+function getCurrentDate() {
+    const date = new Date();
+    return `${String(date.getMonth() + 1).padStart(2, '0')}_${String(date.getDate()).padStart(2, '0')}_${date.getFullYear()}`;
 }
 
-function populateSidebar(data) {
+function handleFormSubmit(event) {
+    event.preventDefault();
+    const formData = new FormData(form);
+
+    const interaction = {
+        id: Date.now(),
+        datetime: new Date().toISOString(),
+        cn: formData.get('calling-number'),
+        in: formData.get('incident-number'),
+        name: formData.get('name'),
+        reason: formData.get('reason-for-calling'),
+        findings: formData.get('findings'),
+        resolution: formData.get('resolution'),
+        completed: false
+    };
+
+    const currentDate = getCurrentDate();
+    let storedData = JSON.parse(localStorage.getItem('interactions')) || [];
+
+    const existingDateEntry = storedData.find((item) => item.date === currentDate);
+    if (existingDateEntry) {
+        existingDateEntry.interactions.push(interaction);
+    } else {
+        storedData.push({ date: currentDate, interactions: [interaction] });
+    }
+
+    localStorage.setItem('interactions', JSON.stringify(storedData));
+    form.reset();
+    displayInteractions();
+    populateSidebar(storedData, currentDate); // refresh sidebar
+}
+
+function displayInteractions(targetDate = getCurrentDate()) {
+    const storedData = JSON.parse(localStorage.getItem('interactions')) || [];
+    const entry = storedData.find((item) => item.date === targetDate);
+
+    if (!entry) {
+        cardList.innerHTML = '<p class="text-gray-500 text-center">No interactions found for this date.</p>';
+        return;
+    }
+
+    const interactionList = entry.interactions
+        .sort((a, b) => new Date(b.datetime) - new Date(a.datetime))
+        .map((interaction) => {
+            let content = `
+        ${interaction.reason ? `<h2 class="text-2xl font-bold mb-2 reason">${interaction.reason}</h2>` : ''}
+        <p class="text-gray-600">Date: ${new Date(interaction.datetime).toLocaleString()}</p>
+        ${interaction.cn ? `<p class="text-gray-600 calling-number">Calling Number: ${interaction.cn}</p>` : ''}
+        ${interaction.in ? `<p class="text-gray-600 incident-number">Incident Number: ${interaction.in}</p>` : ''}
+        ${interaction.name ? `<p class="text-gray-600 name">Name: ${interaction.name}</p>` : ''}
+        ${interaction.findings ? `<p class="text-gray-600 findings">Findings: ${interaction.findings}</p>` : ''}
+        ${interaction.resolution ? `<p class="text-gray-600 resolution">Resolution: ${interaction.resolution}</p>` : ''}`;
+
+            return `
+        <div class="card ${interaction.completed ? 'completed-card' : ''}" id="card-${interaction.id}" data-id="${interaction.id}">
+          <button class="done-button" onclick="toggleComplete(${interaction.id})"><i class="fas fa-check-circle"></i></button>
+          ${content}
+          <div class="flex justify-end mt-4">
+            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-2" onclick="copyToClipboard(${interaction.id})">Copy</button>
+            <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mx-2" onclick="prefillForm(${interaction.id})">Update</button>
+            <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mx-2" onclick="deleteInteraction(${interaction.id})">Delete</button>
+          </div>
+        </div>`;
+        }).join('');
+
+    cardList.innerHTML = interactionList;
+}
+
+function copyInteraction(id) {
+    const storedData = JSON.parse(localStorage.getItem('interactions')) || [];
+    const allInteractions = storedData.flatMap(item => item.interactions);
+    const i = allInteractions.find(i => i.id === id);
+    if (!i) return '';
+
+    const text = [
+        i.cn && `Calling Number: ${i.cn}`,
+        i.in && `Incident Number: ${i.in}`,
+        i.name && `Name: ${i.name}`,
+        i.reason && `Reason for Calling: ${i.reason}`,
+        i.findings && `Findings: ${i.findings}`,
+        i.resolution && `Resolution: ${i.resolution}`
+    ].filter(Boolean).join('\n');
+
+    return text;
+}
+
+function copyToClipboard(id) {
+    const text = copyInteraction(id);
+    navigator.clipboard.writeText(text).then(
+        () => alert('Copied to clipboard'),
+        () => alert('Copy failed')
+    );
+}
+
+function exportDataOption(option) {
+    const storedData = JSON.parse(localStorage.getItem('interactions')) || [];
+    const currentDate = getCurrentDate();
+
+    if (option === 'today') {
+        const entry = storedData.find(item => item.date === currentDate);
+        if (!entry) return;
+        const content = entry.interactions.map(i => copyInteraction(i.id)).join("\n\n--------------------------------------------------------\n\n");
+        downloadFile(content, `interactions_${currentDate}.txt`);
+    } else if (option === 'allText') {
+        const allContent = storedData.map(entry => {
+            const dateHeader = `Date: ${entry.date}`;
+            const body = entry.interactions.map(i => copyInteraction(i.id)).join("\n\n--------------------------------------------------------\n\n");
+            return `${dateHeader}\n\n${body}`;
+        }).join("\n\n============================================================\n\n");
+        downloadFile(allContent, `interactions_all.txt`);
+    } else if (option === 'allJSON') {
+        const jsonData = JSON.stringify({ data: storedData }, null, 2);
+        downloadFile(jsonData, `interactions_all.json`, "application/json");
+    }
+}
+
+function downloadFile(content, filename, type = "text/plain") {
+    const blob = new Blob([content], { type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function createExportPopup() {
+    const popup = document.createElement("div");
+    popup.className = "absolute left-20 bottom-10 bg-white border rounded shadow-lg z-50 w-48 text-sm";
+
+    const options = [
+        { label: "Today (Text)", value: "today" },
+        { label: "All (Text)", value: "allText" },
+        { label: "All Data (JSON)", value: "allJSON" }
+    ];
+
+    options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.textContent = opt.label;
+        btn.className = "w-full text-left px-4 py-2 hover:bg-gray-100";
+        btn.onclick = () => {
+            exportDataOption(opt.value);
+            document.body.removeChild(popup);
+        };
+        popup.appendChild(btn);
+    });
+
+    document.body.appendChild(popup);
+    document.addEventListener("click", (e) => {
+        if (!popup.contains(e.target)) {
+            popup.remove();
+        }
+    }, { once: true });
+}
+
+document.getElementById("export-all")?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    createExportPopup();
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    checkScreenWidth();
+    window.addEventListener("resize", checkScreenWidth);
+
+    const storedData = JSON.parse(localStorage.getItem('interactions')) || [];
+    const today = getCurrentDate();
+    populateSidebar(storedData, today);
+    displayInteractions();
+});
+
+function toggleComplete(id) {
+    const storedData = JSON.parse(localStorage.getItem('interactions')) || [];
+    const currentDate = getCurrentDate();
+    const entry = storedData.find(item => item.date === currentDate);
+    if (entry) {
+        const interaction = entry.interactions.find(i => i.id === id);
+        if (interaction) interaction.completed = !interaction.completed;
+        localStorage.setItem('interactions', JSON.stringify(storedData));
+        displayInteractions();
+    }
+}
+
+function prefillForm(id) {
+    const storedData = JSON.parse(localStorage.getItem('interactions')) || [];
+    const currentDate = getCurrentDate();
+    const entry = storedData.find(item => item.date === currentDate);
+    const interaction = entry?.interactions.find(i => i.id === id);
+    if (!interaction) return;
+
+    form['calling-number'].value = interaction.cn;
+    form['incident-number'].value = interaction.in;
+    form['name'].value = interaction.name;
+    form['reason-for-calling'].value = interaction.reason;
+    form['findings'].value = interaction.findings;
+    form['resolution'].value = interaction.resolution;
+
+    form.onsubmit = function (e) {
+        e.preventDefault();
+        interaction.cn = form['calling-number'].value;
+        interaction.in = form['incident-number'].value;
+        interaction.name = form['name'].value;
+        interaction.reason = form['reason-for-calling'].value;
+        interaction.findings = form['findings'].value;
+        interaction.resolution = form['resolution'].value;
+
+        localStorage.setItem('interactions', JSON.stringify(storedData));
+        form.reset();
+        form.onsubmit = handleFormSubmit;
+        displayInteractions();
+    };
+}
+
+function deleteInteraction(id) {
+    const storedData = JSON.parse(localStorage.getItem('interactions')) || [];
+    const currentDate = getCurrentDate();
+    const entry = storedData.find(item => item.date === currentDate);
+    if (entry) {
+        entry.interactions = entry.interactions.filter(i => i.id !== id);
+        localStorage.setItem('interactions', JSON.stringify(storedData));
+        displayInteractions();
+    }
+}
+
+function checkScreenWidth() {
+    if (window.innerWidth < 800) {
+        sidebar.style.display = "none";
+    } else {
+        sidebar.style.display = "flex";
+    }
+}
+
+function populateSidebar(data, highlightDate = null) {
     const sidebarContent = document.getElementById("sidebar-content");
-    sidebarContent.innerHTML = ""; // Clear existing content
+    sidebarContent.innerHTML = "";
 
     data.forEach((item) => {
         const button = document.createElement("button");
-        button.classList.add("collapsible");
-        button.textContent = item.date;
+        button.className =
+            "w-full flex justify-between items-center px-4 py-2 rounded transition-colors duration-150";
 
-        const content = document.createElement("div");
-        content.classList.add("collapsible-content");
+        const dateSpan = document.createElement("span");
+        dateSpan.textContent = item.date;
 
-        item.interactions.forEach((interaction) => {
-            const interactionDiv = document.createElement("div");
-            interactionDiv.innerHTML = `<p>Name: ${interaction.name}</p><p>Reason: ${interaction.reason}</p>`; // Customize as needed
-            content.appendChild(interactionDiv);
-        });
+        const countBadge = document.createElement("span");
+        countBadge.textContent = item.interactions.length;
+        countBadge.className =
+            "bg-red-500 text-white text-xs font-semibold ml-2 px-2 py-0.5 rounded-full";
 
-        sidebarContent.appendChild(button);
-        sidebarContent.appendChild(content);
+        button.appendChild(dateSpan);
+        button.appendChild(countBadge);
+        button.dataset.date = item.date;
 
-        button.addEventListener("click", function () {
-            this.classList.toggle("active");
-            const content = this.nextElementSibling;
-            if (content.style.display === "block") {
-                content.style.display = "none";
-            } else {
-                content.style.display = "block";
+        button.addEventListener("mouseenter", function () {
+            if (activeSidebarButton !== this) {
+                this.classList.add("bg-gray-200");
             }
         });
+
+        button.addEventListener("mouseleave", function () {
+            if (activeSidebarButton !== this) {
+                this.classList.remove("bg-gray-200");
+            }
+        });
+
+        button.onclick = function () {
+            if (activeSidebarButton && activeSidebarButton !== this) {
+                activeSidebarButton.classList.remove("bg-red-400", "text-white", "font-semibold");
+            }
+
+            if (activeSidebarButton !== this) {
+                this.classList.remove("bg-gray-200");
+                this.classList.add("bg-red-400", "text-white", "font-semibold");
+                activeSidebarButton = this;
+                displayInteractions(item.date);
+            }
+        };
+
+        if (highlightDate && item.date === highlightDate) {
+            setTimeout(() => button.click(), 0);
+        }
+
+        sidebarContent.appendChild(button);
     });
 }
 
-// Close sidebar on load if screen is too small
-function checkScreenWidth() {
-    if (window.innerWidth < 400) {
-        sidebar.classList.add("collapsed");
-        mainContent.classList.add("sidebar-collapsed");
+function toggleSidebar() {
+    const sidebar = document.getElementById("sidebar");
+    if (window.innerWidth < 800) {
+        sidebar.style.display = sidebar.style.display === "none" ? "flex" : "none";
     } else {
-        sidebar.classList.remove("collapsed");
-        mainContent.classList.remove("sidebar-collapsed");
+        sidebar.classList.toggle("w-0");
+        sidebar.classList.toggle("overflow-hidden");
+        sidebar.classList.toggle("w-64");
     }
 }
-
-// Call on load and resize
-checkScreenWidth();
-window.addEventListener("resize", checkScreenWidth);
-
-
-// Call displayInteractions when the page loads
-document.addEventListener('DOMContentLoaded', displayInteractions);
-
